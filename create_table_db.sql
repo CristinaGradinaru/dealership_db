@@ -19,3 +19,20 @@ CREATE TABLE invoice(invoice_id SERIAL PRIMARY KEY, sales_person_id INTEGER NOT 
 CREATE TABLE services(service_id SERIAL PRIMARY KEY, amount NUMERIC(4,2), task VARCHAR(25), part_id INTEGER NOT NULL, FOREIGN KEY (part_id) REFERENCES parts(part_id));
 
 ALTER TABLE services ALTER COLUMN part_id DROP NOT NULL;
+ALTER TABLE customer ADD COLUMN blling_info VARCHAR(45);
+
+CREATE OR REPLACE FUNCTION add_services(_service_id INTEGER, _amount NUMERIC, _task VARCHAR)
+RETURNS void
+AS $SERVICE$
+BEGIN
+	INSERT INTO services(service_id, amount, task, part_id)
+	VALUES(_service_id, _amount, _task, _part_id);
+END;
+$SERVICE$
+LANGUAGE plpgsql;
+
+SELECT add_services(4, 78.99, 'alignment', 1);
+SELECT add_services(5, 78.99, 'coolant refill', NULL);
+
+SELECT *
+FROM services;
